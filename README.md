@@ -27,14 +27,15 @@ var FormsyTime = require('formsy-material-ui/lib/FormsyTime');
 var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
 ```
 
-If you prefer you can import the whole library, and associated MUI components, by requiring `formsy-material-ui`
-this will have the same footprint, regardless of which components you chose to assign in the following line(s):
+If you prefer you can import the whole library, and associated MUI components, by requiring `formsy-material-ui`.
+This will have the same footprint, regardless of which components you chose to assign in the following line(s):
 
 ### ES6:
 
 ```js
 const FMUI = require('formsy-material-ui');
-const { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup, FormsySelect, FormsyText, FormsyTime, FormsyToggle } = FMUI;
+const { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup, FormsySelect, 
+FormsyText, FormsyTime, FormsyToggle } = FMUI;
 ```
 
 ### ES5:
@@ -70,16 +71,6 @@ const Form = React.createClass({
     };
   },
 
-  errorMessages: {
-    wordsError: "Please only use letters"
-  },
-
-  selectFieldItems: [
-    { payload: 'never', text: 'Never' },
-    { payload: 'nightly', text: 'Every Night' },
-    { payload: 'weeknights', text: 'Weeknights' }
-  ],
-
   enableButton: function () {
     this.setState({
       canSubmit: true
@@ -96,9 +87,14 @@ const Form = React.createClass({
     // Submit your validated form
     console.log("Model: ", model);
   },
+  
+  selectFieldItems: [
+    { payload: 'never', text: 'Never' },
+    { payload: 'nightly', text: 'Every Night' },
+    { payload: 'weeknights', text: 'Weeknights' }
+  ],
 
   render: function () {
-    let { wordsError } = this.errorMessages;
 
     return (
       <Formsy.Form
@@ -109,7 +105,7 @@ const Form = React.createClass({
          <FormsyText
           name='name'
           validations='isWords'
-          validationError={wordsError}
+          validationError="Please only use letters"
           required
           hintText="What is your name?"
           value="Bob"
