@@ -1,35 +1,58 @@
 import React from 'react';
+import createClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import Formsy from 'formsy-react';
-import Toggle from 'material-ui/lib/toggle';
-import { _setMuiComponentAndMaybeFocus } from './utils';
+import Toggle from 'material-ui/Toggle';
+import { setMuiComponentAndMaybeFocus } from './utils';
 
-let FormsyToggle = React.createClass({
-  mixins: [ Formsy.Mixin ],
+const FormsyToggle = createClass({
 
   propTypes: {
-    name: React.PropTypes.string.isRequired
+    defaultToggled: PropTypes.bool,
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func,
+    validationError: PropTypes.string,
+    validationErrors: PropTypes.object,
+    validations: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   },
 
-  handleValueChange: function (event, value) {
+  mixins: [Formsy.Mixin],
+
+  componentDidMount() {
+    this.setValue(this.muiComponent.isToggled());
+  },
+
+  handleChange(event, value) {
     this.setValue(value);
     if (this.props.onChange) this.props.onChange(event, value);
   },
 
-  componentDidMount: function () {
-    this.setValue(this._muiComponent.isToggled());
-  },
+  setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
 
-  _setMuiComponentAndMaybeFocus: _setMuiComponentAndMaybeFocus,
+  render() {
+    const {
+      defaultToggled,
+      validations, // eslint-disable-line no-unused-vars
+      validationError, // eslint-disable-line no-unused-vars
+      validationErrors, // eslint-disable-line no-unused-vars
+      ...rest } = this.props;
 
-  render: function () {
+    let value = this.getValue();
+
+    if (typeof value === 'undefined') {
+      value = (typeof defaultToggled !== 'undefined') ? defaultToggled : false;
+    }
+
     return (
       <Toggle
-        {...this.props}
-        ref={this._setMuiComponentAndMaybeFocus}
-        onToggle={this.handleValueChange}
+        disabled={this.isFormDisabled()}
+        {...rest}
+        onToggle={this.handleChange}
+        ref={this.setMuiComponentAndMaybeFocus}
+        toggled={value}
       />
     );
-  }
+  },
 });
 
-module.exports = FormsyToggle;
+export default FormsyToggle;

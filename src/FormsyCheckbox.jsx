@@ -1,36 +1,56 @@
 import React from 'react';
+import createClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import Formsy from 'formsy-react';
-import Checkbox from 'material-ui/lib/checkbox';
-import { _setMuiComponentAndMaybeFocus } from './utils';
+import Checkbox from 'material-ui/Checkbox';
+import { setMuiComponentAndMaybeFocus } from './utils';
 
-let FormsyCheckbox = React.createClass({
-  mixins: [ Formsy.Mixin ],
+const FormsyCheckbox = createClass({
 
   propTypes: {
-    name: React.PropTypes.string.isRequired
+    defaultChecked: PropTypes.bool,
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func,
+    validationError: PropTypes.string,
+    validationErrors: PropTypes.object,
+    validations: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   },
 
-  handleValueChange: function (event, value) {
+  mixins: [Formsy.Mixin],
+
+  componentDidMount() {
+    this.setValue(this.muiComponent.isChecked());
+  },
+
+  handleChange(event, value) {
     this.setValue(value);
     if (this.props.onChange) this.props.onChange(event, value);
   },
 
-  componentDidMount: function () {
-    this.setValue(this._muiComponent.isChecked());
-  },
+  setMuiComponentAndMaybeFocus: setMuiComponentAndMaybeFocus,
 
-  _setMuiComponentAndMaybeFocus: _setMuiComponentAndMaybeFocus,
+  render() {
+    const {
+      defaultChecked, // eslint-disable-line no-unused-vars
+      validations, // eslint-disable-line no-unused-vars
+      validationErrors, // eslint-disable-line no-unused-vars
+      validationError, // eslint-disable-line no-unused-vars
+      ...rest } = this.props;
+    let value = this.getValue();
 
-  render: function () {
+    if (typeof value === 'undefined') {
+      value = (typeof defaultChecked !== 'undefined') ? defaultChecked : false;
+    }
     return (
       <Checkbox
-        {...this.props}
-        ref={this._setMuiComponentAndMaybeFocus}
-        onCheck={this.handleValueChange}
-        checked={this.getValue()}
+        disabled={this.isFormDisabled()}
+        {...rest}
+        checked={value}
+        onCheck={this.handleChange}
+        ref={this.setMuiComponentAndMaybeFocus}
       />
     );
-  }
+  },
 });
 
-module.exports = FormsyCheckbox;
+export default FormsyCheckbox;
